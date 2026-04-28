@@ -1,0 +1,27 @@
+.header {
+    background-color: var(--white);
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 1rem;
+    z-index: 100;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--secondary);
+    border-radius: 4px;
+    padding: 0 0.5rem;
+    width: 400px;
+}
+
+.searchInput {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 0.5rem;
+}
