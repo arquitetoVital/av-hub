@@ -1,4 +1,6 @@
 'use client';
+
+import { useMemo, useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,92 +9,85 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import * as XLSX from "xlsx";
-
-import { CiSearch } from "react-icons/ci";
+import { FaFileDownload } from 'react-icons/fa';
 import styles from "./styles.module.css";
 import Card from "@/app/components/Layout/Card/Card";
-import React from 'react';
-import { FaFileDownload } from 'react-icons/fa';
+import pedidos from "./pedidos.json";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 
-export type Produto = {
-  id: number;
-  data: string,
-  fornecedor: string,
-  descricao: string,
-  qnt: number,
-  un: string,
-  valorMercadoria: number,
-  valorTotalCompra: number,
-  estado: string,
+type Produto = {
+  id: string;
+  data: string;
+  fornecedor: string;
+  descricao: string;
+  un: string;
+  valorMercadoria: number;
+  estado: string;
+  familia: string;
 };
 
-interface Column {
-  id: string;
-  label: string;
-  minWidth?: number;
-  align?: 'right' | 'left' | 'center';
-  format?: (value: number) => string;
-}
-
-const columns: readonly Column[] = [
-  { id: "data", label: "Data" },
-  { id: "fornecedor", label: "Fornecedor" },
-  { id: "descricao", label: "Descrição" },
-  { id: "qnt", label: "Quantidade", align: 'right' },
-  { id: "un", label: "Unidade" },
-  {
-    id: "valorMercadoria",
-    label: "Valor Mercadoria",
-    align: 'right',
-    format: (info) => info.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-  },
-  {
-    id: "valorTotalCompra",
-    label: "Valor Total da Compra",
-    align: 'right',
-    format: (info) => info.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-  },
-  { id: "estado", label: "Estado" },
-];
-
-const rows: Produto[] = [
-  { id: 1, data: "10/01/2025", fornecedor: "TECNOPAR FIXADORES E FERRAMENTAS LTDA", descricao: '3/4"x165 - PARAFUSO ESTOJO; AL; A193 GR B7; B18.2.1; C/ PORCAS A194 2H E ARRUELAS  SÉRIE N, AC, GALV.', qnt: 80, un: "PÇ", valorMercadoria: 759.2, valorTotalCompra: 933.42, estado: "SP" },
-  { id: 2, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 3, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 4, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 5, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 6, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 7, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 8, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 9, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-  { id: 10, data: "14/04/2025", fornecedor: "MERCADO LIVRE", descricao: "2 BOBINA SULFITE A3 297MM X 50M 90GR SFSF", qnt: 2, un: "BOBINA", valorMercadoria: 272, valorTotalCompra: 272, estado: "SP" },
-];
-
 export default function Cadastro() {
-  const [search, setSearch] = React.useState("");
-  const [filteredRows, setFilteredRows] = React.useState<Produto[]>(rows);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [search, setSearch] = useState("");
+  const [rows, setRows] = useState<Produto[]>([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [familiaProdutosSelected, setFamiliaProdutosSelected] = useState('');
+  const [familiaProdutos, setFamiliaProdutos] = useState<{ familia: string }[]>([]);
 
-  React.useEffect(() => {
-    const lowercasedSearch = search.toLowerCase();
-    const filtered = rows.filter((row) =>
-      row.descricao.toLowerCase().includes(lowercasedSearch)
+  //Preparação do Array de produtos geral e familia de produtos
+  useEffect(() => {
+    setLoading(true);
+    let productfamilies: { familia: string }[] = [];
+    const parsed: Produto[] = pedidos.flatMap((pedido) =>
+      pedido.produtos.map((produto) => {
+        productfamilies.push({
+          familia: produto.descricao_familia
+        });
+        return ({
+          id: produto.cProduto,
+          data: pedido.dIncData,
+          fornecedor: pedido.fornecedor.nome_fantasia,
+          descricao: produto.cDescricao,
+          un: produto.cUnidade,
+          valorMercadoria: produto.nValUnit,
+          estado: pedido.fornecedor.estado,
+          familia: produto.descricao_familia
+        })
+      })
     );
-    setFilteredRows(filtered);
-  }, [search]);
+    const cleaned = Array.from(
+      new Map(
+        productfamilies.map(item => [item.familia, item])
+      ).values().filter(x => x.familia.trim().length > 0)
+    );
+    setFamiliaProdutos(cleaned);
+    setRows(parsed);
+    setLoading(false);
+  }, []);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+  //Filtragem de resultados através de descrição E/OU familia de produtos
+  const filteredRows = useMemo(() => {
+    const term = search.toLowerCase();
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    return rows.filter((row) => {
+      const matchDescricao = row.descricao.toLowerCase().includes(term);
+
+      const matchFamilia = !familiaProdutosSelected || row.familia === familiaProdutosSelected;
+
+      return matchDescricao && matchFamilia;
+    });
+  }, [search, rows, familiaProdutosSelected]);
+
+  const paginatedRows = useMemo(() => {
+    return filteredRows.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+  }, [filteredRows, page, rowsPerPage]);
 
   const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(rows);
+    const ws = XLSX.utils.json_to_sheet(filteredRows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Dados");
     XLSX.writeFile(wb, "exportacao_portal.xlsx");
@@ -102,22 +97,46 @@ export default function Cadastro() {
     <>
       <div>
         <h2 className={styles.title}>Catálogo de produtos</h2>
-        <h3 className={styles.subtitle}>Consulte os ultimos valores praticados pelos produtos</h3>
+        <h3 className={styles.subtitle}>
+          Consulte os últimos valores praticados pelos produtos
+        </h3>
       </div>
+
       <div className={styles.content}>
         <Card>
           <h2 className={styles.cardTitle}>Consulta de Produtos</h2>
-          <div className={styles.search}>
-            <CiSearch />
-            <input
-              type="text"
-              className={styles.searchInput}
-              placeholder="digite o nome do produto..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+
+          <div className={styles.inputContainers}>
+            <TextField
+              sx={{ minWidth: 500 }}
+              id="outlined-basic"
+              label="Descrição"
+              variant="outlined"
+              value={search} onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(0); // reset pagina
+              }} />
+            <FormControl sx={{ minWidth: 350 }}>
+              <InputLabel id="familia-produto">Família de Produtos</InputLabel>
+              <Select
+                labelId="familia-produto"
+                id="demo-simple-select"
+                value={familiaProdutosSelected}
+                label="FamiliaProdutos"
+                onChange={(e) => setFamiliaProdutosSelected(e.target.value)}
+              >
+
+                <MenuItem value=""> </MenuItem>
+                {familiaProdutos.map((familia, index) => (
+                  <MenuItem key={index} value={familia.familia}>
+                    {familia.familia}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
         </Card>
+
         <Card>
           <div className={styles.cardHeaderActions}>
             <h2 className={styles.cardTitle}>Produtos Encontrados</h2>
@@ -125,54 +144,56 @@ export default function Cadastro() {
               <FaFileDownload size={18} /> Exportar
             </button>
           </div>
-          <TableContainer sx={{ maxHeight: 380 }} >
-            <Table stickyHeader aria-label="sticky table" size='small' >
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => {
-                    return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                        {columns.map((column) => {
-                          const value = row[column.id as keyof Produto];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === 'number'
-                                ? column.format(value)
-                                : value}
-                            </TableCell>
-                          );
+          {loading ? (
+            <div className={styles.loading}>Carregando...</div>
+          ) : (
+            <TableContainer sx={{ maxHeight: 380 }}>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    {["Cod.", "Data", "Fornecedor", "Descrição", "Unidade", "Valor", "Estado", "Família"].map((label) => (
+                      <TableCell key={label}>{label}</TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {paginatedRows.map((row, index) => (
+                    <TableRow hover key={index}>
+                      <TableCell>{row.id}</TableCell>
+                      <TableCell>{row.data}</TableCell>
+                      <TableCell>{row.fornecedor}</TableCell>
+                      <TableCell>{row.descricao}</TableCell>
+                      <TableCell>{row.un}</TableCell>
+                      <TableCell>
+                        {row.valorMercadoria.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
                         })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                      </TableCell>
+                      <TableCell>{row.estado}</TableCell>
+                      <TableCell>{row.familia}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={rows.length}
+            count={filteredRows.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onPageChange={(_, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(e) => {
+              setRowsPerPage(+e.target.value);
+              setPage(0);
+            }}
           />
         </Card>
       </div>
     </>
-  )
+  );
 }
