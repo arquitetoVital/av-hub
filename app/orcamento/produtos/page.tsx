@@ -13,7 +13,7 @@ import { FaFileDownload } from 'react-icons/fa';
 import styles from "./styles.module.css";
 import Card from "@/app/components/Layout/Card/Card";
 import pedidos from "./pedidos.json";
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 
 type Produto = {
   id: string;
