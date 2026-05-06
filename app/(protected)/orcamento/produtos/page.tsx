@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import * as XLSX from "xlsx";
 import { FaFileDownload } from 'react-icons/fa';
 import styles from "./styles.module.css";
-import Card from "@/app/components/Layout/Card/Card";
+import Card from "@/app/components/Card/Card";
 import pedidos from "./pedidos.json";
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 
@@ -34,15 +34,21 @@ export default function Cadastro() {
   const [loading, setLoading] = useState(true);
   const [familiaProdutosSelected, setFamiliaProdutosSelected] = useState('');
   const [familiaProdutos, setFamiliaProdutos] = useState<{ familia: string }[]>([]);
+  const [fornecedorSelected, setFornecedorSelected] = useState('');
+  const [fornecedor, setFornecedor] = useState<{ fornecedor: string }[]>([]);
 
   //Preparação do Array de produtos geral e familia de produtos
   useEffect(() => {
     setLoading(true);
     let productfamilies: { familia: string }[] = [];
+    let fornecedores: { fornecedor: string }[] = [];
     const parsed: Produto[] = pedidos.flatMap((pedido) =>
       pedido.produtos.map((produto) => {
         productfamilies.push({
           familia: produto.descricao_familia
+        });
+        fornecedores.push({
+          fornecedor: pedido.fornecedor.nome_fantasia
         });
         return ({
           id: produto.cProduto,
@@ -56,28 +62,32 @@ export default function Cadastro() {
         })
       })
     );
-    const cleaned = Array.from(
+    const cleanedFamilia = Array.from(
       new Map(
         productfamilies.map(item => [item.familia, item])
       ).values().filter(x => x.familia.trim().length > 0)
     );
-    setFamiliaProdutos(cleaned);
+    const cleanedFornecedor = Array.from(
+      new Map(
+        fornecedores.map(item => [item.fornecedor, item])
+      ).values().filter(x => x.fornecedor.trim().length > 0)
+    );
+    setFamiliaProdutos(cleanedFamilia);
+    setFornecedor(cleanedFornecedor);
     setRows(parsed);
     setLoading(false);
   }, []);
 
-  //Filtragem de resultados através de descrição E/OU familia de produtos
+  //Filtragem de resultados através de descrição E/OU familia de produtos E/OU fornecedor
   const filteredRows = useMemo(() => {
     const term = search.toLowerCase();
-
     return rows.filter((row) => {
       const matchDescricao = row.descricao.toLowerCase().includes(term);
-
       const matchFamilia = !familiaProdutosSelected || row.familia === familiaProdutosSelected;
-
-      return matchDescricao && matchFamilia;
+      const matchFornecedor = !fornecedorSelected || row.fornecedor === fornecedorSelected;
+      return matchDescricao && matchFamilia && matchFornecedor;
     });
-  }, [search, rows, familiaProdutosSelected]);
+  }, [search, rows, familiaProdutosSelected, fornecedorSelected]);
 
   const paginatedRows = useMemo(() => {
     return filteredRows.slice(
@@ -93,6 +103,12 @@ export default function Cadastro() {
     XLSX.writeFile(wb, "exportacao_portal.xlsx");
   };
 
+  const limparCampos = () => {
+    setSearch('');
+    setFornecedorSelected('');
+    setFamiliaProdutosSelected('');
+  }
+
   return (
     <>
       <div>
@@ -107,8 +123,7 @@ export default function Cadastro() {
           <h2 className={styles.cardTitle}>Consulta de Produtos</h2>
 
           <div className={styles.inputContainers}>
-            <TextField
-              sx={{ minWidth: 500 }}
+            <TextField sx={{ minWidth: 500 }}
               id="outlined-basic"
               label="Descrição"
               variant="outlined"
@@ -134,6 +149,28 @@ export default function Cadastro() {
                 ))}
               </Select>
             </FormControl>
+            <FormControl sx={{ minWidth: 350 }}>
+              <InputLabel id="fornecedor">Fornecedor</InputLabel>
+              <Select
+                labelId="fornecedor"
+                id="select-fornecedor"
+                value={fornecedorSelected}
+                label="Fornecedor"
+                onChange={(e) => setFornecedorSelected(e.target.value)}
+              >
+                <MenuItem value=""> </MenuItem>
+                {fornecedor.map((fornecedor, index) => (
+                  <MenuItem key={index} value={fornecedor.fornecedor}>
+                    {fornecedor.fornecedor}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+          <div className={styles.cardButtons}>
+            <button onClick={limparCampos} className={styles.buttonExport}>
+              Limpar Campos
+            </button>
           </div>
         </Card>
 

@@ -19,7 +19,12 @@
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  margin-top: 1rem;
+  margin: 1rem 0;
+}
+
+.cardButtons{
+  display: flex;
+  justify-content: flex-end;
 }
 
 .search {
@@ -55,7 +60,6 @@
 }
 
 .cardTitle {
-  margin: 0;
   font-size: 1.25rem;
   color: var(--primary);
 }

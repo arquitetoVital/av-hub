@@ -5,10 +5,13 @@ import { MdExpandMore } from "react-icons/md";
 import { useState } from "react";
 import menuItems from "./MenuItem/MenuItem";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Menu = () => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+  const session = useSession();
+  const menuRole = menuItems[session.data?.user.role || 'vendedor'];
 
   const handleMenuItemClick = (menuId: string) => {    
     setExpandedMenu(expandedMenu === menuId ? null : menuId);
@@ -27,7 +30,7 @@ const Menu = () => {
         />
       </div>
       <ul className={styles.menuContainer}>
-        {menuItems.map((item) => (
+        {menuRole.map((item) => (
           <li key={item.id} className={styles.menuWrapper}>
             <div
               className={styles.menuCard}

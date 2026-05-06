@@ -4,10 +4,14 @@
   --primary: #081437;
   --secondary: #334155;
   --tertiary: #0F172A;
-  --neutral: #F8FAFC;
+  --neutral: #e7e8eb;
   --secondary-border: #e2e8f0;
   --white: #FFFFFF;
   --black: #000000;
+
+  --font-primary-dark: #191c1e;
+  --font-secondary-dark: #45464e;
+  --font-primary-light: #e7e8eb;
 }
 
 @media (prefers-color-scheme: dark) {

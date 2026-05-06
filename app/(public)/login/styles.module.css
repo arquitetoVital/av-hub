@@ -1,0 +1,73 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background-image: url(../../../public/layered-waves.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: #081437;
+    background: linear-gradient(-180deg, rgba(8, 20, 55, 1) 0%, rgba(59, 69, 106, 1) 100%);
+    padding: 2rem;
+    gap: 2.5rem;
+    max-width: 400px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.logo {
+    width: 300px;
+    height: auto;
+    margin-bottom: 1rem;
+    opacity: 100%;
+}
+
+.title {
+    font-size: 1.5rem;
+    color: var(--white);
+}
+
+.subTitle {
+    color: var(--font-primary-light);
+    font-size: 0.875rem;
+}
+
+.loginButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    gap: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    cursor: pointer;
+    color: var(--font-primary);
+    font-weight: 700;
+    width: 100%;
+}
+
+.microsoftIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.loginInfo {
+    font-size: 0.75rem;
+    color: var(--white);
+    font-weight: 700;
+    text-align: center;
+}
+
+.loginInfo>span {
+    font-weight: 900;
+    color: var(--font-primary-light);
+}
