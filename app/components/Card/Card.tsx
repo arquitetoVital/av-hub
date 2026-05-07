@@ -1,9 +1,15 @@
 'use client';
-import styles from "./styles.module.css";
+import clsx from "clsx";
+import styles from "./Card.module.css";
 
-export default function Card({ children }: { children: React.ReactNode }) {
+interface CardProps {
+    children: React.ReactNode;
+    className?: string
+}
+
+export default function Card({ children, className }: CardProps) {
     return (
-        <div className={styles.card}>
+        <div className={clsx(styles.card, className)}>
             {children}
         </div>
     )

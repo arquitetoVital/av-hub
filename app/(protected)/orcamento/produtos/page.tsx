@@ -123,7 +123,7 @@ export default function Cadastro() {
           <h2 className={styles.cardTitle}>Consulta de Produtos</h2>
 
           <div className={styles.inputContainers}>
-            <TextField sx={{ minWidth: 500 }}
+            <TextField sx={{ flex: 1, minWidth: 500 }}
               id="outlined-basic"
               label="Descrição"
               variant="outlined"
@@ -131,7 +131,7 @@ export default function Cadastro() {
                 setSearch(e.target.value);
                 setPage(0); // reset pagina
               }} />
-            <FormControl sx={{ minWidth: 350 }}>
+            <FormControl sx={{ flex: 1, minWidth: 350 }}>
               <InputLabel id="familia-produto">Família de Produtos</InputLabel>
               <Select
                 labelId="familia-produto"
@@ -149,7 +149,7 @@ export default function Cadastro() {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ minWidth: 350 }}>
+            <FormControl sx={{ flex: 1, minWidth: 350 }}>
               <InputLabel id="fornecedor">Fornecedor</InputLabel>
               <Select
                 labelId="fornecedor"
@@ -184,12 +184,12 @@ export default function Cadastro() {
           {loading ? (
             <div className={styles.loading}>Carregando...</div>
           ) : (
-            <TableContainer sx={{ maxHeight: 380 }}>
+            <TableContainer sx={{ maxHeight: 380, overflowX: 'auto' }}>
               <Table stickyHeader size="small">
                 <TableHead>
                   <TableRow>
                     {["Cod.", "Data", "Fornecedor", "Descrição", "Unidade", "Valor", "Estado", "Família"].map((label) => (
-                      <TableCell key={label}>{label}</TableCell>
+                      <TableCell key={label} >{label}</TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -200,7 +200,7 @@ export default function Cadastro() {
                       <TableCell>{row.id}</TableCell>
                       <TableCell>{row.data}</TableCell>
                       <TableCell>{row.fornecedor}</TableCell>
-                      <TableCell>{row.descricao}</TableCell>
+                      <TableCell >{row.descricao}</TableCell>
                       <TableCell>{row.un}</TableCell>
                       <TableCell>
                         {row.valorMercadoria.toLocaleString("pt-BR", {

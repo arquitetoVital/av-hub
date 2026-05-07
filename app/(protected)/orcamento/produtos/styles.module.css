@@ -13,11 +13,12 @@
   flex-direction: column;
   padding: 1rem;
   gap: 2rem;
+  min-width: 0;
 }
 
 .inputContainers{
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -31,18 +32,24 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+
   border: 1px solid var(--secondary);
   border-radius: 6px;
   padding: 0 0.5rem;
-  width: 400px;
+
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
 }
 
-.select{
+.select {
   border-radius: 6px;
-  padding: 0 0.5rem;
-  width: 200px;
   height: 40px;
   padding: 0 1rem;
+
+  flex: 1;
+  min-width: 180px;
+  max-width: 200px;
 }
 
 .searchInput {

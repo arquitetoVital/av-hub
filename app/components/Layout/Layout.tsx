@@ -2,7 +2,7 @@
 import { SessionProvider } from "next-auth/react";
 import Header from "./Header/Header";
 import Menu from "./Menu/Menu";
-import styles from "./style.module.css";
+import styles from "./Layout.module.css";
 const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (

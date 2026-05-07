@@ -1,11 +1,12 @@
 "use client"
-import styles from "./style.module.css";
+import styles from "./Menu.module.css";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdExpandMore } from "react-icons/md";
 import { useState } from "react";
-import menuItems from "./MenuItem/MenuItem";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import menuItems from "./MenuItem/MenuItem";
+import iconMap from "./MenuItem/iconMap";
 
 const Menu = () => {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -41,7 +42,7 @@ const Menu = () => {
                 }
               }}
             >
-              {item.icon}
+              {iconMap[item.id as keyof typeof iconMap]}
               <p className={isMinimized ? styles.hidden : ""}>
                 {item.label}
               </p>
