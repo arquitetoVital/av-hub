@@ -4,9 +4,14 @@
     justify-content: center;
     min-height: 100vh;
     padding: 2rem;
-    background-image: url(../../../public/layered-waves.svg);
+    background-image: url('/layered-waves.svg');
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+:global(.dark) .container{
+    background: url('/layered-waves-dark.svg')
+    no-repeat center center / cover;
 }
 
 .card {
@@ -15,12 +20,15 @@
     align-items: center;
     justify-content: center;
     border-radius: 15px;
-    background: #081437;
+    background: red;
     background: linear-gradient(-180deg, rgba(8, 20, 55, 1) 0%, rgba(59, 69, 106, 1) 100%);
     padding: 2rem;
     gap: 2.5rem;
     max-width: 400px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+:global(.dark) .card{
+    box-shadow: rgba(225, 225, 225, 0.15) 0px 5px 15px;
 }
 
 .logo {
@@ -36,7 +44,7 @@
 }
 
 .subTitle {
-    color: var(--font-primary-light);
+    color: var(--foreground-tertiary);
     font-size: 0.875rem;
 }
 
@@ -50,9 +58,10 @@
     border-radius: 5px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     cursor: pointer;
-    color: var(--font-primary);
+    color: var(--black);
     font-weight: 700;
     width: 100%;
+    background-color: var(--white);
 }
 
 .microsoftIcon {
@@ -69,5 +78,5 @@
 
 .loginInfo>span {
     font-weight: 900;
-    color: var(--font-primary-light);
+    color: var(--foreground-tertiary);
 }

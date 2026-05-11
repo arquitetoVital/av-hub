@@ -7,6 +7,7 @@ import { CiSearch } from 'react-icons/ci';
 import { BiLogOut } from 'react-icons/bi';
 import Avatar from './Avatar/Avatar';
 import { ImExit } from 'react-icons/im';
+import ThemeToggle from './ThemeToggle/ThemeToggle';
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -49,21 +50,24 @@ export default function Header() {
         />
       </div>
       {status === 'authenticated' && userName && (
-        <div className={styles.avatarContainer} ref={menuRef}>
-          <Avatar  onClick={handleToggleMenu} />
-          {isOpen && (
-            <div className={styles.configMenu}>
-              <div className={styles.userInfo}>
-                <span className={styles.userName}>{userName}</span>
-                <span className={styles.userEmail}>{userEmail}</span>
+        <div className={styles.buttonsContainer}>
+          <ThemeToggle />
+          <div className={styles.avatarContainer} ref={menuRef}>
+            <Avatar onClick={handleToggleMenu} />
+            {isOpen && (
+              <div className={styles.configMenu}>
+                <div className={styles.userInfo}>
+                  <span className={styles.userName}>{userName}</span>
+                  <span className={styles.userEmail}>{userEmail}</span>
+                </div>
+                <hr className={styles.divider} />
+                <button className={styles.logoutButton} onClick={handleLogout}>
+                  <ImExit />
+                  Sair
+                </button>
               </div>
-              <hr className={styles.divider} />
-              <button className={styles.logoutButton} onClick={handleLogout}>
-                <ImExit />
-                Sair
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </header>

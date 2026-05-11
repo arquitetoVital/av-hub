@@ -1,5 +1,5 @@
 .header {
-    background-color: var(--white);
+    background-color: var(--surface);
     height: 60px;
     display: flex;
     justify-content: space-between;
@@ -13,10 +13,20 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border: 1px solid var(--secondary);
+    border: 1px solid var(--border);
     border-radius: 4px;
     padding: 0 0.5rem;
     width: 400px;
+    background-color: var(--white);
+}
+
+::placeholder {
+  color: var(--primary); 
+  opacity: 1;   
+}
+
+.search > svg {
+   color: var(--primary);
 }
 
 .searchInput {
@@ -24,6 +34,7 @@
     outline: none;
     width: 100%;
     padding: 0.5rem;
+    background-color: var(--white);
 }
 
 .configMenu{
@@ -33,7 +44,11 @@
     position: relative;
 }
 
-/**********************************/
+.buttonsContainer{
+  display: flex;
+  gap: 1rem
+}
+
 .avatarContainer {
   position: relative;
   display: inline-block;
@@ -45,8 +60,8 @@
   top: 125%;
   right: 0;
   width: 200px;
-  background-color: var(--white);
-  border: 1px solid var(--neutral);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   /* border-top: none; */
   border-radius: 0  0 8px 8px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -65,18 +80,18 @@
 
 .userName {
   font-size: 1rem;
-  color: var(--font-primary-dark);
+  color: var(--foreground);
 }
 
 .userEmail {
   font-size: 0.75rem;
-  color: var(--font-secondary-dark);
+  color: var(--foreground-secondary);
 }
 
 .divider {
   border: 0;
   height: 1px;
-  background: var(--neutral);
+  background: var(--surface-secondary);
   margin: 0.5rem;
 }
 
@@ -87,7 +102,7 @@
   width: 100%;
   padding: 0 1rem;
   font-size: 1.15rem;
-  color: var(--red);
+  color: var(--danger);
   text-align: left;
   background: none;
   border: none;
@@ -96,6 +111,6 @@
 }
 
 .logoutButton:hover {
-  background-color: var(--red-neutral);
-  color: var(--red-accent);
+  background-color: var(--danger-soft);
+  color: var(--danger-hover);
 }

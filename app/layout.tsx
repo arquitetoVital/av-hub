@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Roboto, Fira_Sans } from "next/font/google";
 import "./globals.css";
-import "./reset.css";
 import Providers from "./providers";
 
 const interSans = Inter({
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-br" className={`${robotoSans.variable} ${interSans.variable} ${firaSans.variable}`}>
+    <html lang="pt-br" suppressHydrationWarning className={`${robotoSans.variable} ${interSans.variable} ${firaSans.variable}`}>
       <body>
         <Providers>
           {children}

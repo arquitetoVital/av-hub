@@ -117,7 +117,6 @@ export default function Cadastro() {
           Consulte os últimos valores praticados pelos produtos
         </h3>
       </div>
-
       <div className={styles.content}>
         <Card>
           <h2 className={styles.cardTitle}>Consulta de Produtos</h2>
@@ -222,6 +221,8 @@ export default function Cadastro() {
             component="div"
             count={filteredRows.length}
             rowsPerPage={rowsPerPage}
+            labelRowsPerPage={'Resultados por página'}
+            labelDisplayedRows={({from,to,count,page})=>{return `${from}-${to} de ${count}`}}
             page={page}
             onPageChange={(_, newPage) => setPage(newPage)}
             onRowsPerPageChange={(e) => {
