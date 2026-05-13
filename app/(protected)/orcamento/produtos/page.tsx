@@ -11,9 +11,9 @@ import TableRow from '@mui/material/TableRow';
 import * as XLSX from "xlsx";
 import { FaFileDownload } from 'react-icons/fa';
 import styles from "./styles.module.css";
-import Card from "@/app/components/Card/Card";
+import Card from "@/components/Card/Card";
 import pedidos from "./pedidos.json";
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 
 type Produto = {
   id: string;
@@ -21,6 +21,7 @@ type Produto = {
   fornecedor: string;
   descricao: string;
   un: string;
+  valorMedio: number;
   valorMercadoria: number;
   estado: string;
   familia: string;
@@ -32,10 +33,13 @@ export default function Cadastro() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
+
   const [familiaProdutosSelected, setFamiliaProdutosSelected] = useState('');
   const [familiaProdutos, setFamiliaProdutos] = useState<{ familia: string }[]>([]);
-  const [fornecedorSelected, setFornecedorSelected] = useState('');
-  const [fornecedor, setFornecedor] = useState<{ fornecedor: string }[]>([]);
+
+  const [fornecedorSelected, setFornecedorSelected] = useState<string | null>(null);
+  const [fornecedor, setFornecedor] = useState<string []>([]);
+  const [inputFornecedor, setInputFornecedor] = useState<string>('');
 
   //Preparação do Array de produtos geral e familia de produtos
   useEffect(() => {
@@ -56,6 +60,7 @@ export default function Cadastro() {
           fornecedor: pedido.fornecedor.nome_fantasia,
           descricao: produto.cDescricao,
           un: produto.cUnidade,
+          valorMedio: 0,
           valorMercadoria: produto.nValUnit,
           estado: pedido.fornecedor.estado,
           familia: produto.descricao_familia
@@ -69,8 +74,8 @@ export default function Cadastro() {
     );
     const cleanedFornecedor = Array.from(
       new Map(
-        fornecedores.map(item => [item.fornecedor, item])
-      ).values().filter(x => x.fornecedor.trim().length > 0)
+        fornecedores.map(item => [item.fornecedor, item.fornecedor])
+      ).values().filter(x => x.trim().length > 0)
     );
     setFamiliaProdutos(cleanedFamilia);
     setFornecedor(cleanedFornecedor);
@@ -105,8 +110,9 @@ export default function Cadastro() {
 
   const limparCampos = () => {
     setSearch('');
-    setFornecedorSelected('');
     setFamiliaProdutosSelected('');
+    setFornecedorSelected(null);
+    setInputFornecedor('');
   }
 
   return (
@@ -122,7 +128,7 @@ export default function Cadastro() {
           <h2 className={styles.cardTitle}>Consulta de Produtos</h2>
 
           <div className={styles.inputContainers}>
-            <TextField sx={{ flex: 1, minWidth: 500 }}
+            <TextField sx={{ flex: 1, minWidth: 300 }}
               id="outlined-basic"
               label="Descrição"
               variant="outlined"
@@ -130,7 +136,7 @@ export default function Cadastro() {
                 setSearch(e.target.value);
                 setPage(0); // reset pagina
               }} />
-            <FormControl sx={{ flex: 1, minWidth: 350 }}>
+            <FormControl sx={{ flex: 1, minWidth: 300 }}>
               <InputLabel id="familia-produto">Família de Produtos</InputLabel>
               <Select
                 labelId="familia-produto"
@@ -148,23 +154,17 @@ export default function Cadastro() {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ flex: 1, minWidth: 350 }}>
-              <InputLabel id="fornecedor">Fornecedor</InputLabel>
-              <Select
-                labelId="fornecedor"
-                id="select-fornecedor"
-                value={fornecedorSelected}
-                label="Fornecedor"
-                onChange={(e) => setFornecedorSelected(e.target.value)}
-              >
-                <MenuItem value=""> </MenuItem>
-                {fornecedor.map((fornecedor, index) => (
-                  <MenuItem key={index} value={fornecedor.fornecedor}>
-                    {fornecedor.fornecedor}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              sx={{ flex: 1, minWidth: 300 }}
+              disablePortal
+              options={fornecedor}
+              getOptionLabel={(fornecedor) => fornecedor}
+              value={fornecedorSelected}
+              inputValue={inputFornecedor}
+              renderInput={(params) => <TextField {...params} label="Fornecedores"/>}
+              onChange={(_, newValue) => { setFornecedorSelected(newValue) }}
+              onInputChange={(_, newInputValue) => { setInputFornecedor(newInputValue) }}
+            />
           </div>
           <div className={styles.cardButtons}>
             <button onClick={limparCampos} className={styles.buttonExport}>
@@ -187,7 +187,7 @@ export default function Cadastro() {
               <Table stickyHeader size="small">
                 <TableHead>
                   <TableRow>
-                    {["Cod.", "Data", "Fornecedor", "Descrição", "Unidade", "Valor", "Estado", "Família"].map((label) => (
+                    {["Data", "Descrição do produto", "Cod. produto", "Família do produto", "Unidade", "Fornecedor", "Estado", "Valor médio", "Ultimo valor",].map((label) => (
                       <TableCell key={label} >{label}</TableCell>
                     ))}
                   </TableRow>
@@ -195,20 +195,21 @@ export default function Cadastro() {
 
                 <TableBody>
                   {paginatedRows.map((row, index) => (
-                    <TableRow hover key={index}>
-                      <TableCell>{row.id}</TableCell>
+                    <TableRow hover key={index} onClick={() => console.log(row)}>
                       <TableCell>{row.data}</TableCell>
-                      <TableCell>{row.fornecedor}</TableCell>
                       <TableCell >{row.descricao}</TableCell>
+                      <TableCell>{row.id}</TableCell>
+                      <TableCell>{row.familia}</TableCell>
                       <TableCell>{row.un}</TableCell>
+                      <TableCell>{row.fornecedor}</TableCell>
+                      <TableCell>{row.estado}</TableCell>
+                      <TableCell>{row.valorMedio}</TableCell>
                       <TableCell>
                         {row.valorMercadoria.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
                         })}
                       </TableCell>
-                      <TableCell>{row.estado}</TableCell>
-                      <TableCell>{row.familia}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -222,7 +223,7 @@ export default function Cadastro() {
             count={filteredRows.length}
             rowsPerPage={rowsPerPage}
             labelRowsPerPage={'Resultados por página'}
-            labelDisplayedRows={({from,to,count,page})=>{return `${from}-${to} de ${count}`}}
+            labelDisplayedRows={({ from, to, count, page }) => { return `${from}-${to} de ${count}` }}
             page={page}
             onPageChange={(_, newPage) => setPage(newPage)}
             onRowsPerPageChange={(e) => {
