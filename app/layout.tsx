@@ -1,22 +1,13 @@
-import type { Metadata } from "next";
-import { Inter, Roboto, Fira_Sans } from "next/font/google";
-import "./globals.css";
-import Providers from "./providers";
-
-const interSans = Inter({
-  variable: "--font-inter-sans",
-  subsets: ["latin"],
-});
-
-const robotoSans = Roboto({
-  variable: "--font-roboto-sans",
-  subsets: ["latin"],
-});
+import type { Metadata, Viewport } from "next";
+import { Fira_Sans } from "next/font/google";
+import "@/styles/globals.css";
+import Providers from "@/providers";
 
 const firaSans = Fira_Sans({
   variable: "--font-fira-sans",
   subsets: ["latin"],
-  weight: ['400', '600', '700', '900']
+  weight: ['400', '600', '700', '900'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -24,10 +15,16 @@ export const metadata: Metadata = {
   description: "Sistema Auxiliar dos processos da Aços Vital",
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#081437',
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-br" suppressHydrationWarning className={`${robotoSans.variable} ${interSans.variable} ${firaSans.variable}`}>
-      <body>
+    <html lang="pt-br" suppressHydrationWarning>
+      <body className={`${firaSans.variable}`}>
         <Providers>
           {children}
         </Providers>

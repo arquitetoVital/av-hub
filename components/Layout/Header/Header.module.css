@@ -4,9 +4,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: color-mix(in srgb, var(--foreground), gray 95%) 0px 3px 15px;
     padding: 1rem;
     z-index: 100;
+    color: var(--foreground)
+}
+
+:global(.dark) :local(.header){
+  box-shadow: color-mix(in srgb, var(--foreground), gray 95%) 0px -7px 20px;
 }
 
 .search {
@@ -113,4 +118,10 @@
 .logoutButton:hover {
   background-color: var(--danger-soft);
   color: var(--danger-hover);
+}
+
+@media screen and (max-width: 768px) {
+  .search{
+    display: none;
+  }
 }

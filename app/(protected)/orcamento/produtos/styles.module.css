@@ -1,6 +1,6 @@
 .title {
   font-size: 2.25rem;
-  color: var(--foregroud);
+  color: var(--foreground-secondary);
 }
 
 .subtitle {
@@ -73,7 +73,7 @@
   align-items: center;
   gap: 0.5rem;
   background-color: var(--primary);
-  color: var(--foreground-tertiary);
+  color: var(--text-light);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;

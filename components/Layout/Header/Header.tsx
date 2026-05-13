@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { signOut, useSession } from 'next-auth/react';
 import styles from './Header.module.css';
 import { CiSearch } from 'react-icons/ci';
-import { BiLogOut } from 'react-icons/bi';
 import Avatar from './Avatar/Avatar';
 import { ImExit } from 'react-icons/im';
 import ThemeToggle from './ThemeToggle/ThemeToggle';

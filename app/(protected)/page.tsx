@@ -1,5 +1,4 @@
 'use client';
-import Card from "../components/Card/Card";
 import styles from "./styles.module.css";
 
 export default function Home() {

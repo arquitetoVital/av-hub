@@ -31,15 +31,19 @@ const handler = NextAuth({
       return token;
     },
 
-    // Adiciona a role no session para ficar visivel no frontend
+    // Adiciona a role no session para ficar visivel no frontend (session.user.role)
     async session({ session, token }) {
       if (session.user) {
         session.user.role = token.role;
       }
-
       return session;
     },
-  }
+  },
+  pages: {
+    signIn: '/',
+    signOut: '/',
+    error: '/login',
+  },
 });
 
 export { handler as GET, handler as POST };
