@@ -1,8 +1,5 @@
 .dashboardContainer {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    grid-column-gap: 2rem;
-    grid-row-gap: 2rem;
-    background-color: red;
+    padding: 1rem;
+    width: 100%;
+    min-height: calc(100dvh - 80px);
 }
