@@ -11,12 +11,15 @@
     /* fixed */
     --text-dark: #191c1e;
     --text-light: #f8fafc;
+    --text-dark-secondary: #45464e;
+    --text-light-secondary: #cbd5e1;
     --white: #ffffff;
     --black: #000000;
 
     /* brand */
     --primary: #081437;
     --secondary: #334155;
+    --tertiary: #101424;
 
     /* borders */
     --border: #e2e8f0;

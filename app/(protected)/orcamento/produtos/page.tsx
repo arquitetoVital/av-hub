@@ -12,8 +12,11 @@ import * as XLSX from "xlsx";
 import { FaFileDownload } from 'react-icons/fa';
 import styles from "./styles.module.css";
 import Card from "@/components/Card/Card";
-import pedidos from "./pedidos.json";
+import pedidos from "./pedidos_3.json";
 import { Autocomplete, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import Modal from '@/components/Modal/Modal';
+import { LineChart } from '@mui/x-charts';
+import { dataset, valueFormatter } from './product';
 
 type Produto = {
   id: string;
@@ -33,12 +36,14 @@ export default function Cadastro() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [rowData, setRowData] = useState<Produto>();
 
   const [familiaProdutosSelected, setFamiliaProdutosSelected] = useState('');
   const [familiaProdutos, setFamiliaProdutos] = useState<{ familia: string }[]>([]);
 
   const [fornecedorSelected, setFornecedorSelected] = useState<string | null>(null);
-  const [fornecedor, setFornecedor] = useState<string []>([]);
+  const [fornecedor, setFornecedor] = useState<string[]>([]);
   const [inputFornecedor, setInputFornecedor] = useState<string>('');
 
   //Preparação do Array de produtos geral e familia de produtos
@@ -161,7 +166,7 @@ export default function Cadastro() {
               getOptionLabel={(fornecedor) => fornecedor}
               value={fornecedorSelected}
               inputValue={inputFornecedor}
-              renderInput={(params) => <TextField {...params} label="Fornecedores"/>}
+              renderInput={(params) => <TextField {...params} label="Fornecedores" />}
               onChange={(_, newValue) => { setFornecedorSelected(newValue) }}
               onInputChange={(_, newInputValue) => { setInputFornecedor(newInputValue) }}
             />
@@ -195,7 +200,10 @@ export default function Cadastro() {
 
                 <TableBody>
                   {paginatedRows.map((row, index) => (
-                    <TableRow hover key={index} onClick={() => console.log(row)}>
+                    <TableRow hover key={index} onClick={() => {
+                      setRowData(row)
+                      setIsOpen(true)
+                    }}>
                       <TableCell>{row.data}</TableCell>
                       <TableCell >{row.descricao}</TableCell>
                       <TableCell>{row.id}</TableCell>
@@ -233,6 +241,46 @@ export default function Cadastro() {
           />
         </Card>
       </div>
+      <Modal
+        title='Detalhes do fornecedor'
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
+        {rowData && (
+          <div style={{
+            width: '100%',
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+          }}>
+            <div>
+              <p>Nome: {rowData && rowData.fornecedor}</p>
+              <p>Estado: {rowData && rowData.estado}</p>
+            </div>
+            <hr />
+            <div>
+              <LineChart
+                sx={{ paddingRight: '1rem' }}
+                height={250}
+                dataset={dataset}
+                series={[
+                  {
+                    dataKey: 'valor',
+                    label: `${rowData.descricao}`,
+                    curve: 'natural',
+                    valueFormatter: valueFormatter,
+                    showMark: true
+                  },
+                ]}
+                xAxis={[{ scaleType: 'point', dataKey: 'month' }]}
+                yAxis={[{ valueFormatter: valueFormatter, }]}
+                grid={{ vertical: true, horizontal: true }}
+              />
+            </div>
+          </div>
+        )}
+      </Modal>
     </>
   );
 }
