@@ -7,11 +7,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SessionProvider>
-      <div className={styles.container}>
+      <div className={styles.app}>
         <Menu />
-        <div className={styles.content}>
+        <div className={styles.shell}>
           <Header />
-          <main className={styles.mainContent}>
+          <main className={styles.mainArea}>
             {children}
           </main>
         </div>

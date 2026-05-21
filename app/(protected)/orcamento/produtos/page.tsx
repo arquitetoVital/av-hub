@@ -17,6 +17,8 @@ import { Autocomplete, FormControl, InputLabel, MenuItem, Select, TextField } fr
 import Modal from '@/components/Modal/Modal';
 import { LineChart } from '@mui/x-charts';
 import { dataset, valueFormatter } from './product';
+import Button from '@/components/Button/Button';
+import AppLineChart from '@/components/Charts/AppLineChart';
 
 type Produto = {
   id: string;
@@ -120,9 +122,11 @@ export default function Cadastro() {
     setInputFornecedor('');
   }
 
+  const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
   return (
     <>
-      <div>
+      <div className={styles.title}>
         <h2 className={styles.title}>Catálogo de produtos</h2>
         <h3 className={styles.subtitle}>
           Consulte os últimos valores praticados pelos produtos
@@ -172,27 +176,27 @@ export default function Cadastro() {
             />
           </div>
           <div className={styles.cardButtons}>
-            <button onClick={limparCampos} className={styles.buttonExport}>
+            <Button variant='secondary' onClick={limparCampos}>
               Limpar Campos
-            </button>
+            </Button>
           </div>
         </Card>
 
         <Card>
           <div className={styles.cardHeaderActions}>
             <h2 className={styles.cardTitle}>Produtos Encontrados</h2>
-            <button onClick={exportToExcel} className={styles.buttonExport}>
-              <FaFileDownload size={18} /> Exportar
-            </button>
+            <Button variant='primary' onClick={exportToExcel} icon={<FaFileDownload size={18} />}>
+              Exportar
+            </Button>
           </div>
           {loading ? (
             <div className={styles.loading}>Carregando...</div>
           ) : (
             <TableContainer sx={{ maxHeight: 380, overflowX: 'auto' }}>
               <Table stickyHeader size="small">
-                <TableHead>
-                  <TableRow>
-                    {["Data", "Descrição do produto", "Cod. produto", "Família do produto", "Unidade", "Fornecedor", "Estado", "Valor médio", "Ultimo valor",].map((label) => (
+                <TableHead >
+                  <TableRow >
+                    {["Data", "Descrição do produto", "Cod.", "Família", "UN", "Fornecedor", "UF", "Valor médio", "Ultimo valor",].map((label) => (
                       <TableCell key={label} >{label}</TableCell>
                     ))}
                   </TableRow>
@@ -242,40 +246,26 @@ export default function Cadastro() {
         </Card>
       </div>
       <Modal
-        title='Detalhes do fornecedor'
+        title='Detalhes do produto'
+        subtitle={rowData?.descricao}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       >
         {rowData && (
-          <div style={{
-            width: '100%',
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem'
-          }}>
+          <div className={styles.modalContent}>
+            <dl className={styles.definitionList}>
+              <dt className={styles.definitionTerm}>Fornecedor</dt><dd className={styles.definitionDescription}>{rowData.fornecedor}</dd>
+              <dt className={styles.definitionTerm}>Estado</dt><dd className={styles.definitionDescription}>{rowData.estado}</dd>
+              <dt className={styles.definitionTerm}>Última compra</dt><dd className={styles.definitionDescription} >{rowData.data} · {brl(rowData.valorMercadoria)}</dd>
+              <dt className={styles.definitionTerm}>Valor médio (12m)</dt><dd className={styles.definitionDescription}>{brl(rowData.valorMedio)}</dd>
+            </dl>
+            <hr className={styles.divider} />
             <div>
-              <p>Nome: {rowData && rowData.fornecedor}</p>
-              <p>Estado: {rowData && rowData.estado}</p>
-            </div>
-            <hr />
-            <div>
-              <LineChart
-                sx={{ paddingRight: '1rem' }}
-                height={250}
-                dataset={dataset}
-                series={[
-                  {
-                    dataKey: 'valor',
-                    label: `${rowData.descricao}`,
-                    curve: 'natural',
-                    valueFormatter: valueFormatter,
-                    showMark: true
-                  },
-                ]}
-                xAxis={[{ scaleType: 'point', dataKey: 'month' }]}
-                yAxis={[{ valueFormatter: valueFormatter, }]}
-                grid={{ vertical: true, horizontal: true }}
+              <AppLineChart
+                label={rowData.descricao}
+                xLabels={dataset.map(item => item.month)}
+                data={dataset.map(item => item.valor)}
+                valueFormatter={valueFormatter}
               />
             </div>
           </div>
